@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <main>
+  <main class="flex flex-col items-center">
     <h1 class="text-3xl font-bold text-center">Home</h1>
     <p>
       A small project simulating a moving marker on a map using

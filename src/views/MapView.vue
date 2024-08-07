@@ -2,8 +2,10 @@
   <div class="flex flex-col items-center">
     <h1 class="text-3xl font-bold text-center">The Map</h1>
     <p>Press the button to start moving</p>
-    <button @click="move" class="btn">Let's Move</button>
-
+    <div class="flex flex-wrap items-center space-x-2">
+      <button @click="startMoving" class="btn">Let's Move</button>
+      <button @click="stopMoving" class="btn">Stop Moving</button>
+    </div>
     <div id="map" className="map w-[800px] max-w-full aspect-square"></div>
   </div>
 </template>
@@ -11,18 +13,26 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue'
 import L from 'leaflet'
+import { socket } from '@/socket'
+
 let latitud = ref(0)
 let longitud = ref(0)
 const map = ref(null)
 const mapContainer = ref(null)
 const marker = ref(null)
 
-const move = () => {
-  setInterval(() => {
-    latitud.value += 0.0001
-    longitud.value += 0.0001
-  }, 200)
+const startMoving = () => {
+  socket.emit('start-moving', { lat: latitud.value, long: longitud.value })
 }
+
+const stopMoving = () => {
+  socket.emit('stop-moving')
+}
+
+socket.on('location-update', ({ lat, long }) => {
+  latitud.value = lat
+  longitud.value = long
+})
 
 const getLocation = () => {
   if (navigator.geolocation) {
